@@ -1,43 +1,39 @@
-#include <vector>
+#include "Graph.h"
+#include <algorithm>
 #include <queue>
-#include <atomic>
-#include <thread>
 
-class Graph {
-private:
-    int V;
-    std::vector<std::vector<int>> adjList;
+Graph::Graph(int vertices) : V(vertices), adjList(vertices) {}
 
-public:
-    Graph(int vertices) : V(vertices), adjList(vertices) {}
-
-    void addEdge(int src, int dest) {
-        if (std::find(adjList[src].begin(), adjList[src].end(), dest) == adjList[src].end()) {
-            adjList[src].push_back(dest);
-        }
+void Graph::addEdge(int src, int dest) {
+    if (src < 0 || dest < 0 || src >= V || dest >= V) return;
+    auto& vec = adjList[src];
+    if (std::find(vec.begin(), vec.end(), dest) == vec.end()) {
+        vec.push_back(dest);
     }
+}
 
-    void parallelBFS(int startVertex) {
-        // Реализация parallelBFS будет добавлена позже
-    }
+void Graph::parallelBFS(int /*startVertex*/) {
+    // Заглушка, как в Java-версии
+}
 
-    void bfs(int startVertex) {
-        std::vector<bool> visited(V, false);
-        std::queue<int> queue;
+void Graph::bfs(int startVertex) {
+    if (startVertex < 0 || startVertex >= V) return;
+    std::vector<char> visited(V, 0);
+    std::queue<int> q;
 
-        visited[startVertex] = true;
-        queue.push(startVertex);
+    visited[startVertex] = 1;
+    q.push(startVertex);
 
-        while (!queue.empty()) {
-            startVertex = queue.front();
-            queue.pop();
-
-            for (int n : adjList[startVertex]) {
-                if (!visited[n]) {
-                    visited[n] = true;
-                    queue.push(n);
-                }
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        for (int n : adjList[u]) {
+            if (!visited[n]) {
+                visited[n] = 1;
+                q.push(n);
             }
         }
     }
-};
+}
+
+int Graph::vertices() const { return V; }
